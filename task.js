@@ -36,25 +36,20 @@ function cachingDecoratorNew(func) {
 
 //Задача № 2
 function debounceDecoratorNew(func, delay) {
-  // let isTrottled = false;
-  let timeoutId = null;
+  let timeoutId;
+  let isTrottled = false;
   function wrapper(...args) {
-    if (timeoutId) {
-      wrapper.allCount++;
-      // clearTimeout(timeoutId);
-      return
-    }
-    func(...args);
-    wrapper.count++;
-    wrapper.allCount++;
-    // isTrottled = true;
+    clearTimeout(timeoutId);
     timeoutId = setTimeout( () => {
+      func(args);
+      isTrottled = false;
+    }, delay);
+    if (!isTrottled) {
       func(...args);
       wrapper.count++;
-      wrapper.allCount++;
-      timeoutId = true;
-      clearTimeout(timeoutId);
-    }, delay);
+      isTrottled = true;
+    }
+    wrapper.allCount++;
   }
   wrapper.count = 0;
   wrapper.allCount = 0;
